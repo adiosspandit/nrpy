@@ -43,10 +43,9 @@ def get_all_policy_conditions(nr_user_api_key, accountId, policyId, policyName, 
     while True:
         result = alertsaiclient.get_policy_conditions_nrql(nr_user_api_key, accountId, policyId, policyName, nextCursor)
         if 'error' in result:
-            logger.error(json.dumps(result))
             logger.info(str(policyId) + " is an invalid policy.")
             invalid_policy_list.append({'policyId': policyId, 'policyName': policyName})
-            return conditions_list, empty_policy_list, invalid_policy_list
+            return conditions_list, invalid_policy_list, empty_policy_list
         else:
             conditions = result['response']['data']['actor']['account']['alerts']['nrqlConditionsSearch']
             nextCursor = conditions['nextCursor']
@@ -54,7 +53,7 @@ def get_all_policy_conditions(nr_user_api_key, accountId, policyId, policyName, 
             if not conditions['nrqlConditions']:
                 logger.info(str(policyId) + " has no conditions.")
                 empty_policy_list.append({'policyId': policyId, 'policyName': policyName})
-                return conditions_list, empty_policy_list, invalid_policy_list
+                return conditions_list, invalid_policy_list, empty_policy_list
             else:
                 result_condition_list = conditions['nrqlConditions']
         for condition in result_condition_list:
@@ -62,10 +61,50 @@ def get_all_policy_conditions(nr_user_api_key, accountId, policyId, policyName, 
                 "policyId": policyId,
                 "policyName": policyName,
                 "conditionId": condition['id'],
+                "conditionType": condition['type'],
                 "conditionName": condition['name'],
                 "conditionQuery": condition['nrql']['query'],
-                "enabled": condition['enabled']
+                "nrqlEvaluationOffset": condition['nrql']['evaluationOffset'],
+                "description": condition['description'],
+                "enabled": condition['enabled'],
+                "runbookUrl": condition['runbookUrl'],
+                "closeViolationsOnExpiration": condition['expiration']['closeViolationsOnExpiration'],
+                "expirationDuration": condition['expiration']['expirationDuration'],
+                "openViolationOnExpiration": condition['expiration']['openViolationOnExpiration'],
+                "aggregationDelay": condition['signal']['aggregationDelay'],
+                "aggregationMethod": condition['signal']['aggregationMethod'],
+                "aggregationTimer": condition['signal']['aggregationTimer'],
+                "aggregationWindow": condition['signal']['aggregationWindow'],
+                "evaluationDelay": condition['signal']['evaluationDelay'],
+                "evaluationOffset": condition['signal']['evaluationOffset'],
+                "fillOption": condition['signal']['fillOption'],
+                "fillValue": condition['signal']['fillValue'],
+                "slideBy": condition['signal']['slideBy'],
+                "violationTimeLimit": condition['violationTimeLimit'],
+                "violationTimeLimitSeconds": condition['violationTimeLimitSeconds']
             })
+            if len(condition['terms']) > 1:
+                conditions_list[-1]["operator1"] = condition['terms'][0]['operator']
+                conditions_list[-1]["priority1"] = condition['terms'][0]['priority']
+                conditions_list[-1]["threshold1"] = condition['terms'][0]['threshold']
+                conditions_list[-1]["thresholdDuration1"] = condition['terms'][0]['thresholdDuration']
+                conditions_list[-1]["thresholdOccurrences1"] = condition['terms'][0]['thresholdOccurrences']
+                conditions_list[-1]["operator2"] = condition['terms'][1]['operator']
+                conditions_list[-1]["priority2"] = condition['terms'][1]['priority']
+                conditions_list[-1]["threshold2"] = condition['terms'][1]['threshold']
+                conditions_list[-1]["thresholdDuration2"] = condition['terms'][1]['thresholdDuration']
+                conditions_list[-1]["thresholdOccurrences2"] = condition['terms'][1]['thresholdOccurrences']
+            else:
+                conditions_list[-1]["operator1"] = condition['terms'][0]['operator']
+                conditions_list[-1]["priority1"] = condition['terms'][0]['priority']
+                conditions_list[-1]["threshold1"] = condition['terms'][0]['threshold']
+                conditions_list[-1]["thresholdDuration1"] = condition['terms'][0]['thresholdDuration']
+                conditions_list[-1]["thresholdOccurrences1"] = condition['terms'][0]['thresholdOccurrences']
+                conditions_list[-1]["operator2"] = None
+                conditions_list[-1]["priority2"] = None
+                conditions_list[-1]["threshold2"] = None
+                conditions_list[-1]["thresholdDuration2"] = None
+                conditions_list[-1]["thresholdOccurrences2"] = None
 
         # Break the loop if there is no next cursor
         if not nextCursor:

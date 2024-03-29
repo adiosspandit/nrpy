@@ -22,6 +22,15 @@ def load_json_from_file(dir_name, json_file_name):
     return file_json
 
 
+def load_csv_to_list_of_dicts(file_name):
+    list_of_dicts = []
+    with open(file_name, 'r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        for row in csv_reader:
+            list_of_dicts.append(row)
+    return list_of_dicts
+
+
 def create_dirs(dir_path):
     logger.debug("Creating " + dir_path)
     if '/' in dir_path:

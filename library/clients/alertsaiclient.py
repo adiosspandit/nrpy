@@ -69,44 +69,106 @@ class AlertsAI:
     def get_policy_conditions_payload(accountId, policyId, policyName, nextCursor=None):
         if nextCursor:
             conditions_query = """query ($accountId: Int!, $policyId: ID) {
-                              actor {
-                                account(id: $accountId) {
-                                  alerts {
-                                    nrqlConditionsSearch(searchCriteria: {policyId: $policyId}, cursor: "%s") {
-                                      nextCursor
-                                      nrqlConditions {
-                                        enabled
-                                        name
-                                        id
-                                        nrql {
-                                          query
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }""" % (nextCursor)
+                                                  actor {
+                                                    account(id: $accountId) {
+                                                      alerts {
+                                                        nrqlConditionsSearch(searchCriteria: {policyId: $policyId}, cursor: "%s") {
+                                                          nextCursor
+                                                          nrqlConditions {
+                                                            description
+                                                            enabled
+                                                            expiration {
+                                                              closeViolationsOnExpiration
+                                                              expirationDuration
+                                                              openViolationOnExpiration
+                                                            }
+                                                            id
+                                                            name
+                                                            nrql {
+                                                              evaluationOffset
+                                                              query
+                                                            }
+                                                            policyId
+                                                            runbookUrl
+                                                            signal {
+                                                              aggregationDelay
+                                                              aggregationMethod
+                                                              aggregationTimer
+                                                              aggregationWindow
+                                                              evaluationDelay
+                                                              evaluationOffset
+                                                              fillOption
+                                                              fillValue
+                                                              slideBy
+                                                            }
+                                                            terms {
+                                                              operator
+                                                              priority
+                                                              threshold
+                                                              thresholdDuration
+                                                              thresholdOccurrences
+                                                            }
+                                                            type
+                                                            violationTimeLimit
+                                                            violationTimeLimitSeconds
+                                                          }
+                                                          totalCount
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }""" % nextCursor
             variables = {'accountId': accountId, 'policyId': policyId}
         else:
             conditions_query = """query ($accountId: Int!, $policyId: ID) {
-                              actor {
-                                account(id: $accountId) {
-                                  alerts {
-                                    nrqlConditionsSearch(searchCriteria: {policyId: $policyId}) {
-                                      nextCursor
-                                      nrqlConditions {
-                                        enabled
-                                        name
-                                        id
-                                        nrql {
-                                          query
+                                      actor {
+                                        account(id: $accountId) {
+                                          alerts {
+                                            nrqlConditionsSearch(searchCriteria: {policyId: $policyId}) {
+                                              nextCursor
+                                              nrqlConditions {
+                                                description
+                                                enabled
+                                                expiration {
+                                                  closeViolationsOnExpiration
+                                                  expirationDuration
+                                                  openViolationOnExpiration
+                                                }
+                                                id
+                                                name
+                                                nrql {
+                                                  evaluationOffset
+                                                  query
+                                                }
+                                                policyId
+                                                runbookUrl
+                                                signal {
+                                                  aggregationDelay
+                                                  aggregationMethod
+                                                  aggregationTimer
+                                                  aggregationWindow
+                                                  evaluationDelay
+                                                  evaluationOffset
+                                                  fillOption
+                                                  fillValue
+                                                  slideBy
+                                                }
+                                                terms {
+                                                  operator
+                                                  priority
+                                                  threshold
+                                                  thresholdDuration
+                                                  thresholdOccurrences
+                                                }
+                                                type
+                                                violationTimeLimit
+                                                violationTimeLimitSeconds
+                                              }
+                                              totalCount
+                                            }
+                                          }
                                         }
                                       }
-                                    }
-                                  }
-                                }
-                              }
-                            }"""
+                                    }"""
             variables = {'accountId': accountId, 'policyId': policyId}
         return {'query': conditions_query, 'variables': variables}

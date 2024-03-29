@@ -22,7 +22,9 @@ The table below lists the scripts that can be used for different use cases.
 No. | Use Case         | Scripts
 --- | ---------------- | -----------------------------------------------------------
 1.  | Update Tag value | entitytags --delTagValues "key:value" --addTags "key:value"
-
+2.  | Dashboards       | 
+3.  | Alerts AI        |
+4.  | CCU Consumption  |
 ## Usage
 
 ### 1) python3 entitytags.py
@@ -37,7 +39,7 @@ addTags             | Tags to be added : owner:Jack
 getAllInfraHostTags | pass to list all mutable tags for all infra hosts
 rmAllInfraHostTags  | pass to delete all mutable tags for all infra hosts
 
-### 1) python3 dashboards.py
+### 2) python3 dashboards.py
 
 Supports two actions --download or --copy
 
@@ -53,6 +55,20 @@ copy        | Copies dashboard to options provided in following to... parameters
 toAccount   | copy toAccount
 toApiKey    | (optional) if not provided fromApiKey is used and assumed to work for toAccount
 toName      | (optional) copy toName if not then copied as 'Copy of ' source dashboard name
+
+### 3) python3 alertsai.py
+
+
+### 4) python3 ccuconsumption.py
+This script will generate a report of all conditions CCU consumption between the given `SINCE` and `UNTIL` date from all the accounts the user has access to.
+
+#### Pre-requisites:
+Update the `ccuconsumption.json` file with the following details:
+- `nr_user_api_key`: User API key
+- `since`: The start date for the report in the format `YYYY-MM-DDTHH:MM:SSZ`
+- `until`: The end date for the report in the format `YYYY-MM-DDTHH:MM:SSZ`
+
+
 
 ### Logging
 
